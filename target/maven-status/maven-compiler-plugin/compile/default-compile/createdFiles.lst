@@ -1,0 +1,12 @@
+kg\almalab\meddocs\config\SecurityConfig.class
+kg\almalab\meddocs\util\QrWatermarkUtil.class
+kg\almalab\meddocs\model\UserRole.class
+kg\almalab\meddocs\repo\TemplateDocRepo.class
+kg\almalab\meddocs\repo\UserRepo.class
+kg\almalab\meddocs\controller\TemplateController.class
+kg\almalab\meddocs\model\TemplateDocument.class
+kg\almalab\meddocs\service\TemplateService.class
+kg\almalab\meddocs\MedDocsApplication.class
+kg\almalab\meddocs\model\TemplateStatus.class
+kg\almalab\meddocs\controller\AuthController.class
+kg\almalab\meddocs\model\User.class

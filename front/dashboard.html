@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>AlmaLab - Дэшборд</title>
+    <script src="app.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Дэшборд AlmaLab</h1>
+
+<div class="tabs">
+    <button class="tab-button" data-target="uploadTab">Загрузить документ</button>
+    <button class="tab-button" data-target="signTab">Подписать документ</button>
+</div>
+
+<div id="uploadTab" class="tab-content">
+    <h3>Загрузка документа</h3>
+    <input type="file" id="fileInput"><br>
+    <button id="sendButton">Отправить</button>
+    <div id="uploadMessage" style="color: green;"></div>
+</div>
+
+<div id="signTab" class="tab-content" style="display:none;">
+    <h3>Подписать документ</h3>
+    <input type="number" id="documentId" placeholder="ID документа"><br>
+    <button id="signButton">Подписать</button>
+    <div id="signMessage" style="color: green;"></div>
+</div>
+</body>
+</html>
