@@ -1,5 +1,7 @@
 package kg.almalab.meddocs.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -13,6 +15,7 @@ public class DocumentSignature {
     private String signerRole;
     private LocalDateTime signedAt;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private TemplateDocument document;
 

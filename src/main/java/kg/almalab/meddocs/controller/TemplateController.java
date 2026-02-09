@@ -74,9 +74,13 @@ public class TemplateController {
         TemplateDocument doc = templateDocRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Документ не найден"));
 
+        String disposition = doc.getFilename().endsWith(".pdf")
+                ? "inline"
+                : "attachment";
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=\"" + doc.getFilename() + "\"")
+                        disposition + "; filename=\"" + doc.getFilename() + "\"")
                 .contentType(getMediaType(doc.getFilename()))
                 .body(doc.getFileData());
     }

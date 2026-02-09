@@ -1,5 +1,7 @@
 package kg.almalab.meddocs.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -23,9 +25,10 @@ public class TemplateDocument {
     @ManyToOne
     private User user;
 
-
+    @Lob
     @Basic(fetch = FetchType.LAZY)
-    @Column(name = "file_data", columnDefinition = "bytea")
+    @JsonIgnore
+    @Column(name = "file_data", columnDefinition = "oid")
     private byte[] fileData;
 
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -60,6 +63,11 @@ public class TemplateDocument {
 
     public User getUser() { return user; }
     public void setUser(User u) { user = u; }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
 
     public byte[] getFileData() {
         return fileData;
