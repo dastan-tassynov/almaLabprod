@@ -1,4 +1,5 @@
 package kg.almalab.meddocs.service;
+import jakarta.transaction.Transactional;
 import kg.almalab.meddocs.model.*;
 import kg.almalab.meddocs.repo.DocumentSignatureRepo;
 import kg.almalab.meddocs.repo.TemplateDocRepo;
@@ -13,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -128,7 +129,11 @@ public class TemplateService {
 
         if (doc.getFilename().endsWith(".docx")) {
             // Читаем файл полностью в память
-            byte[] fileBytes = Files.readAllBytes(file.toPath());
+            byte[] fileBytes = doc.getFileData();
+
+            if (fileBytes == null || fileBytes.length == 0) {
+                throw new RuntimeException("Файл пустой или не найден в базе данных");
+            }
 
             try (XWPFDocument xdoc = new XWPFDocument(new ByteArrayInputStream(fileBytes))) {
 
@@ -159,6 +164,12 @@ public class TemplateService {
                     // Формируем данные для сканера: ФИО и Дата
                     StringBuilder qrData = new StringBuilder();
                     qrData.append("Организация: AlmaLab\n");
+                    String creatorName = (doc.getUser() != null) ? doc.getUser().getFullName() : "Сотрудник";
+                    String createDate = doc.getCreatedAt().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+
+                    qrData.append("Загрузил(а): ").append(creatorName)
+                            .append("\nДата загрузки: ").append(createDate)
+                            .append("\n------------------\n");
                     Set<String> signedUsers = new LinkedHashSet<>();
 
                     for (DocumentSignature sig : doc.getSignatures()) {
@@ -173,7 +184,9 @@ public class TemplateService {
                         }
                     }
 
-                    byte[] qrImage = QrWatermarkUtil.generateQRBytes(qrData.toString());
+                    String verifyUrl = "https://almalabfrontprod.vercel.app/verify/" + doc.getId();
+
+                    byte[] qrImage = QrWatermarkUtil.generateQRBytes(verifyUrl);
 
                     // Оптимальный размер (примерно 5 см)
                     int width = (int)(2.0 * 952500);
@@ -243,6 +256,27 @@ public class TemplateService {
         doc.setComment(comment);
 
         return repo.save(doc);
+    }
+
+    @Transactional
+    public void reupload(Long id, MultipartFile file) throws IOException {
+        TemplateDocument doc = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Документ не найден"));
+
+        // 1. Заменяем контент файла
+        doc.setFileData(file.getBytes());
+        doc.setFilename(file.getOriginalFilename());
+
+        // 2. ОБНОВЛЯЕМ ДАТУ (Это критично! В QR-коде подпись автора станет сегодняшней)
+        doc.setCreatedAt(LocalDateTime.now());
+
+        // 3. СБРАСЫВАЕМ СТАТУС (Файл снова идет к админу на проверку)
+        doc.setStatus(TemplateStatus.SENT_TO_ADMIN);
+
+        // 4. ОЧИЩАЕМ СТАРЫЕ ПОДПИСИ (Старые подписи админа/директора к новому файлу не относятся)
+        doc.getSignatures().clear();
+
+        repo.save(doc);
     }
 
    }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin()
 @RequestMapping("/auth")
 public class AuthController {
     private final UserRepo userRepo;
@@ -45,18 +45,18 @@ public class AuthController {
 
         if (userRepo.findByUsername("myrzagalieva") == null) {
             User a = new User();
-            a.setFullName("Мырзагалиева");
+            a.setFullName("Мырзагалиева А. М.");
             a.setUsername("myrzagalieva");
-            a.setPassword(encoder.encode("admin123"));
+            a.setPassword(encoder.encode("myrzagalieva0101"));
             a.setRole(UserRole.ADMIN);
             userRepo.save(a);
         }
 
         if (userRepo.findByUsername("asylbekov") == null) {
             User s = new User();
-            s.setFullName("Асылбеков");
+            s.setFullName("Асылбеков Б. А.");
             s.setUsername("asylbekov");
-            s.setPassword(encoder.encode("super123"));
+            s.setPassword(encoder.encode("asylbekov0101"));
             s.setRole(UserRole.SUPERADMIN);
             userRepo.save(s);
         }

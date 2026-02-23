@@ -2,8 +2,7 @@ package kg.almalab.meddocs.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Entity;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,4 +75,7 @@ public class TemplateDocument {
     public void setFileData(byte[] signedPdf) {
         fileData = signedPdf;
     }
+
+    public LocalDateTime setCreatedAt(LocalDateTime created){
+        return  createdAt = created;}
 }

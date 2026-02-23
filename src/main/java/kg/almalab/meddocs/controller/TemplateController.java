@@ -11,12 +11,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin()
 @RequestMapping("/templates")
 public class TemplateController {
     private final TemplateService service;
@@ -96,6 +97,16 @@ public class TemplateController {
             @RequestBody Map<String, String> body
     ) {
         return service.returnForFix(id, body.get("comment"));
+    }
+
+    @PostMapping("/{id}/reupload")
+    public ResponseEntity<?> reupload(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+        // Вызываем логику обновления
+        service.reupload(id, file);
+        return ResponseEntity.ok().build();
     }
 
 
